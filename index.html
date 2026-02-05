@@ -437,5 +437,36 @@
     </footer>
 
     <script src="script.js"></script>
+    <script>
+fetch("https://api.github.com/users/sadhna1118/repos")
+  .then(response => response.json())
+  .then(repos => {
+    const container = document.getElementById("projects-container");
+    container.innerHTML = "";
+
+    // Sort latest updated first
+    repos.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+
+    repos.forEach(repo => {
+      // Skip the portfolio repo itself
+      if (repo.name.toLowerCase() === "portfolio") return;
+
+      const card = document.createElement("div");
+      card.className = "project-card";
+
+      card.innerHTML = `
+        <h3>${repo.name.replace(/-/g, " ")}</h3>
+        <p>${repo.description ? repo.description : "GitHub project built using " + (repo.language || "various technologies")}</p>
+        <a href="${repo.html_url}" target="_blank">View Code</a>
+      `;
+
+      container.appendChild(card);
+    });
+  })
+  .catch(error => {
+    document.getElementById("projects-container").innerHTML = "Failed to load projects.";
+    console.error(error);
+  });
+</script>
 </body>
 </html>
